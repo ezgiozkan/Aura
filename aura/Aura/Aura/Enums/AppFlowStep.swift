@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+enum AppFlowStep {
+    case videoSplash
+    case preOnboarding
+    case onboarding
+}

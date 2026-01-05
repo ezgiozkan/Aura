@@ -8,17 +8,19 @@
 import SwiftUI
 
 struct PreOnboardingView: View {
+    let onFinished: () -> Void
+    
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            WebView(htmlFileName: "luxury-splash-profiles")
+            WebView(htmlFileName: "luxury-splash-enhanced", onFinished: {
+            })
                 .ignoresSafeArea()
 
             VStack {
                 Spacer()
-
                 PrimaryButton(titleKey: "primary_begin") {
-                    // TODO: Navigate onboarding screen
+                    onFinished()
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 40)
@@ -28,6 +30,6 @@ struct PreOnboardingView: View {
 }
 
 #Preview {
-    PreOnboardingView()
+    PreOnboardingView(onFinished: {})
 }
 

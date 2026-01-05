@@ -9,12 +9,18 @@ import SwiftUI
 
 struct SplashView: View {
     let onFinished: () -> Void
-    
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            WebView(htmlFileName: "luxury-splash-profiles", onFinished: onFinished)
-                .ignoresSafeArea()
+            WebView(htmlFileName: "dating-assistant-intro", onFinished: {
+                print("🎬 Video finished!")
+                onFinished()
+            })
+            .ignoresSafeArea()
+        }
+        .onAppear {
+            print("🎬 SplashView appeared")
         }
     }
 }
