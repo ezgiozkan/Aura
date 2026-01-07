@@ -1,0 +1,26 @@
+/* 
+  Localizable.strings
+  Aura
+
+  Created by Ezgi Özkan on 5.01.2026.
+  
+*/
+
+/* Buttons */
+
+"primary_begin" = "Begin";
+"primary_next" = "Next";
+
+/* Onboarding - Titles */
+
+"onboarding_title_first_impression" = "Master Your First Impression";
+"onboarding_title_context" = "It Understands the Context";
+"onboarding_title_upload" = "Upload a Chat";
+"onboarding_title_export" = "Export Your Chats";
+
+/* Onboarding - Descriptions */
+
+"onboarding_desc_first_impression" = "Spark connections with witty, charming, and effortlessly perfect replies, crafted by AI for every unique moment.";
+"onboarding_desc_context" = "Aura reads between the lines — tone, intent, and energy — to suggest replies that truly fit the moment.";
+"onboarding_desc_upload" = "Learn from real conversations that work. Upload a chat and see what keeps the spark alive.";
+"onboarding_desc_export" = "Upload your chats to get personalized insights and better replies, tailored to your style.";
