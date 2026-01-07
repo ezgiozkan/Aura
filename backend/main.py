@@ -37,6 +37,16 @@ class MatchResponse(BaseModel):
     green_flags: List[str]
     verdict: str
 
+# --- RIZZ FEATURE MODELS ---
+
+class RizzOption(BaseModel):
+    text: str
+    tone: str  # e.g., "Flirty", "Funny", "Mysterious"
+    explanation: str # Why this line works
+
+class RizzResponse(BaseModel):
+    image_analysis: str
+    options: List[RizzOption]
 
 # --- ENDPOINTS ---
 
@@ -106,6 +116,65 @@ async def check_aura(
     except Exception as e:
         print(f"Error during analysis: {e}")
         raise HTTPException(status_code=500, detail="Aura analysis failed. Please try again.")
+
+
+@app.post("/generate-rizz", response_model=RizzResponse)
+async def generate_rizz(
+        image: UploadFile = File(...),
+        extra_context: str = "Make it impressive but casual."
+):
+    """
+    Analyzes an Instagram story screenshot and generates conversation starters (Rizz lines).
+    """
+    try:
+        image_bytes = await image.read()
+
+        # System Prompt: The "Rizz God" Persona
+        prompt = f"""
+        You are a world-class social dynamics expert and dating coach. 
+        Your task is to generate the perfect "reply" to this Instagram Story.
+
+        Context provided by user: {extra_context}
+
+        Step 1: Analyze the image. Is it a selfie? Food? Travel? A meme? 
+        Step 2: Generate 3 DISTINCT opening lines to start a conversation.
+
+        Guidelines:
+        - NO "Hi", "Hello", "Nice pic". Those are banned.
+        - Be specific. If there is a cat, mention the cat. If it's sushi, mention the sushi.
+        - Keep it short (Instagram DMs are quick).
+        - Different vibes: 
+            1. Funny/Witty (Playful teasing)
+            2. Flirty/Bold (Direct interest)
+            3. Casual/Observational (Low pressure)
+
+        Return strictly JSON format:
+        {{
+            "image_analysis": "Brief description of what is in the photo (e.g., 'A golden retriever playing in a park')",
+            "options": [
+                {{ "tone": "Funny", "text": "...", "explanation": "..." }},
+                {{ "tone": "Flirty", "text": "...", "explanation": "..." }},
+                {{ "tone": "Casual", "text": "...", "explanation": "..." }}
+            ]
+        }}
+        """
+
+        content = [
+            prompt,
+            {"mime_type": "image/jpeg", "data": image_bytes}
+        ]
+
+        response = model.generate_content(content)
+
+        # Clean up JSON
+        cleaned_text = response.text.replace("```json", "").replace("```", "").strip()
+        result = json.loads(cleaned_text)
+
+        return result
+
+    except Exception as e:
+        print(f"Rizz generation error: {e}")
+        raise HTTPException(status_code=500, detail="Rizz machine broken. Try again.")
 
 
 if __name__ == "__main__":
