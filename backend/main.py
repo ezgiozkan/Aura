@@ -17,7 +17,8 @@ app = FastAPI(
 
 # --- CONFIGURATION ---
 # Configure Google Gemini API
-api_key = os.getenv("GOOGLE_API_KEY")
+api_key = os.getenv(""
+                    "")
 if not api_key:
     raise ValueError("GOOGLE_API_KEY is missing in .env file")
 
