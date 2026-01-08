@@ -66,17 +66,6 @@ Application Flow
 
 ⸻
 
-Development Status
-
-The application is currently under active development.
-
-Planned enhancements include:
-	•	Tone and style selection
-	•	Deeper personalization options
-	•	Conversation insight analytics
-
-⸻
-
 Vision
 
 Aura is built on the belief that digital communication should feel intuitive and confident rather than stressful.
