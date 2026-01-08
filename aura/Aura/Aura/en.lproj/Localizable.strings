@@ -1,4 +1,4 @@
-/* 
+/*
   Localizable.strings
   Aura
 
@@ -16,11 +16,30 @@
 "onboarding_title_first_impression" = "Master Your First Impression";
 "onboarding_title_context" = "It Understands the Context";
 "onboarding_title_upload" = "Upload a Chat";
-"onboarding_title_export" = "Export Your Chats";
+"onboarding_visual_match" = "Discover your visual match";
+"onboarding_title_final" = "Final Step";
 
 /* Onboarding - Descriptions */
 
 "onboarding_desc_first_impression" = "Spark connections with witty, charming, and effortlessly perfect replies, crafted by AI for every unique moment.";
 "onboarding_desc_context" = "Aura reads between the lines — tone, intent, and energy — to suggest replies that truly fit the moment.";
 "onboarding_desc_upload" = "Learn from real conversations that work. Upload a chat and see what keeps the spark alive.";
-"onboarding_desc_export" = "Upload your chats to get personalized insights and better replies, tailored to your style.";
+"onboarding_desc_visual" = "Upload your photo and your crush’s photo. AI
+evaluates visual harmony and match potential.";
+"onboarding_desc_final" = "Tell us a bit about yourself so we can personalize your experience.";
+
+/* Final Step */
+"final_step_sex_title" = "Sex";
+"final_step_age_title" = "Age";
+"final_step_intention_title" = "Dating Intention";
+"final_step_sex_male" = "Male";
+"final_step_sex_female" = "Female";
+"final_step_sex_non_binary" = "Non-Binary";
+"final_step_age_13_17" = "13–17";
+"final_step_age_18_24" = "18–24";
+"final_step_age_25_34" = "25–34";
+"final_step_age_35_44" = "35–44";
+"final_step_age_45_plus" = "45+";
+"final_step_intention_relationship" = "Relationship";
+"final_step_intention_casual" = "Casual";
+"final_step_intention_fun" = "Fun";

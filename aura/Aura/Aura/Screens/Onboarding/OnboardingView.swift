@@ -9,7 +9,10 @@ import SwiftUI
 
 struct OnboardingView: View {
     @State private var currentIndex: Int = 0
-    private let totalCount: Int = 4
+    @State private var selectedSex: String? = nil
+    @State private var selectedAge: String? = nil
+    @State private var selectedIntention: String? = nil
+    private let totalCount: Int = 5
 
     private var step: OnboardingStep {
         OnboardingStep(rawValue: currentIndex) ?? .firstImpression
@@ -38,7 +41,7 @@ struct OnboardingView: View {
                             }
                             .padding(.leading, 20)
                         }
-                        
+
                         Spacer()
                     }
 
@@ -63,19 +66,33 @@ struct OnboardingView: View {
                         .padding(.horizontal, 40)
                 }
 
-                Image(onboardingIconName(for: currentIndex))
-                    .resizable()
-                    .scaledToFit()
-                    .frame(maxWidth: .infinity, maxHeight: 480)
-                    .padding(.top, 42)
-                
-                Spacer()
-            }
+                if currentIndex == 4 {
+                    FinalStepContent(
+                        selectedSex: $selectedSex,
+                        selectedAge: $selectedAge,
+                        selectedIntention: $selectedIntention
+                    )
+                }
 
-            VStack {
-                Spacer()
+                if currentIndex != 4 {
+                    Image(onboardingIconName(for: currentIndex))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: 480)
+                        .padding(.top, 42)
+                }
 
-                PrimaryButton(titleKey: LocalizedStringKey("primary_next")) {
+                if currentIndex == 4 {
+                    Spacer(minLength: 40)
+                } else {
+                    Spacer()
+                }
+
+                PrimaryButton(
+                    titleKey: LocalizedStringKey("primary_next"),
+                    isDisabled: currentIndex == 4 &&
+                        (selectedSex == nil || selectedAge == nil || selectedIntention == nil)
+                ) {
                     withAnimation(.easeInOut(duration: 0.25)) {
                         currentIndex = min(totalCount - 1, currentIndex + 1)
                     }

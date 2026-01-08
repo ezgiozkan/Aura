@@ -11,7 +11,8 @@ enum OnboardingStep: Int, CaseIterable {
     case firstImpression
     case context
     case uploadChat
-    case exportChats
+    case visualMatch
+    case final
 }
 
 extension OnboardingStep {
@@ -23,8 +24,10 @@ extension OnboardingStep {
             return "onboarding_title_context"
         case .uploadChat:
             return "onboarding_title_upload"
-        case .exportChats:
-            return "onboarding_title_export"
+        case .visualMatch:
+            return "onboarding_visual_match"
+        case .final:
+            return "onboarding_title_final"
         }
     }
 
@@ -36,8 +39,10 @@ extension OnboardingStep {
             return "onboarding_desc_context"
         case .uploadChat:
             return "onboarding_desc_upload"
-        case .exportChats:
-            return "onboarding_desc_export"
+        case .visualMatch:
+            return "onboarding_desc_visual"
+        case .final:
+            return "onboarding_desc_final"
         }
     }
 }
