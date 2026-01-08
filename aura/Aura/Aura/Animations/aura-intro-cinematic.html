@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Aura - AI Dating Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            overflow: hidden;
+            background: #000000;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Screen 1: Opening - AURA Logo */
+        .screen-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .logo-container {
+            text-align: center;
+        }
+
+        .logo-icon {
+            font-size: clamp(90px, 22vw, 150px);
+            animation: logoAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            display: inline-block;
+        }
+
+        .logo-text {
+            font-size: clamp(55px, 14vw, 90px);
+            font-weight: 700;
+            color: white;
+            margin-top: 20px;
+            letter-spacing: 4px;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.4s forwards;
+        }
+
+        .logo-subtitle {
+            font-size: clamp(18px, 4.5vw, 26px);
+            color: rgba(255,255,255,0.9);
+            margin-top: 15px;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out 0.7s forwards;
+        }
+
+        @keyframes logoAppear {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.15) rotate(10deg);
+            }
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Screen 2: Problem - Texting Anxiety */
+        .screen-2 {
+            background: linear-gradient(180deg, #FFF5F7 0%, #FFE8EC 100%);
+        }
+
+        .problem-container {
+            text-align: center;
+            padding: 0 30px;
+            position: relative;
+        }
+
+        .phone-mockup {
+            width: 280px;
+            height: 520px;
+            background: white;
+            border-radius: 40px;
+            margin: 0 auto 40px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            overflow: hidden;
+            animation: phoneShake 0.6s ease infinite;
+        }
+
+        @keyframes phoneShake {
+            0%, 100% { transform: rotate(-2deg) translateX(-3px); }
+            50% { transform: rotate(2deg) translateX(3px); }
+        }
+
+        .phone-screen {
+            padding: 50px 20px 20px;
+            height: 100%;
+            background: #f5f5f5;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 80px 0;
+        }
+
+        .dot {
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: dotBounce 1.4s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes dotBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-20px); }
+        }
+
+        .draft-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .draft-msg {
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #999;
+            text-decoration: line-through;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        .draft-msg:nth-child(1) { animation-delay: 0s; }
+        .draft-msg:nth-child(2) { animation-delay: 0.7s; }
+        .draft-msg:nth-child(3) { animation-delay: 1.4s; }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .floating-emoji {
+            position: absolute;
+            font-size: 60px;
+            animation: floatAround 3s ease-in-out infinite;
+        }
+
+        .emoji-left {
+            left: 10%;
+            top: 15%;
+        }
+
+        .emoji-right {
+            right: 10%;
+            top: 25%;
+            animation-delay: 1s;
+        }
+
+        @keyframes floatAround {
+            0%, 100% { transform: translateY(0px) rotate(-5deg); }
+            50% { transform: translateY(-25px) rotate(5deg); }
+        }
+
+        .problem-text {
+            font-size: clamp(32px, 8vw, 48px);
+            font-weight: 800;
+            color: #1a1a2e;
+            line-height: 1.2;
+        }
+
+        .problem-text .highlight {
+            color: #e91e63;
+        }
+
+        /* Screen 3: Solution - AI Brain */
+        .screen-3 {
+            background: linear-gradient(180deg, #E8F5E9 0%, #C8E6C9 100%);
+        }
+
+        .solution-container {
+            text-align: center;
+            padding: 0 30px;
+        }
+
+        .brain-container {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 60px;
+            position: relative;
+            animation: brainPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes brainPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        .brain-emoji {
+            font-size: 140px;
+            filter: drop-shadow(0 15px 40px rgba(76, 175, 80, 0.4));
+        }
+
+        .sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 35px;
+            animation: sparkleOrbit 3s linear infinite;
+        }
+
+        .sparkle:nth-child(1) {
+            top: 0;
+            left: 50%;
+            animation-delay: 0s;
+        }
+
+        .sparkle:nth-child(2) {
+            top: 50%;
+            right: 0;
+            animation-delay: 0.6s;
+        }
+
+        .sparkle:nth-child(3) {
+            bottom: 0;
+            left: 50%;
+            animation-delay: 1.2s;
+        }
+
+        .sparkle:nth-child(4) {
+            top: 50%;
+            left: 0;
+            animation-delay: 1.8s;
+        }
+
+        @keyframes sparkleOrbit {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1) rotate(180deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .solution-text {
+            font-size: clamp(32px, 8vw, 48px);
+            font-weight: 800;
+            color: #1a1a2e;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .solution-text .highlight {
+            color: #4CAF50;
+        }
+
+        .solution-subtext {
+            font-size: clamp(18px, 4.5vw, 24px);
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Screen 4: Chat Example */
+        .screen-4 {
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+
+        .chat-title {
+            font-size: clamp(30px, 7.5vw, 44px);
+            font-weight: 700;
+            color: #000;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chat-demo {
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .chat-info h3 {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .chat-info p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+        }
+
+        .chat-body {
+            padding: 20px;
+            background: #f9f9f9;
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.5;
+            animation: messageSlideIn 0.5s ease-out;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.received {
+            background: white;
+            align-self: flex-start;
+            border-radius: 16px 16px 16px 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .message.sent {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            align-self: flex-end;
+            border-radius: 16px 16px 4px 16px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Screen 5: Power Words Sequence */
+        .screen-5, .screen-6, .screen-7, .screen-8 {
+            background: #000000;
+        }
+
+        .power-word {
+            font-size: clamp(65px, 16vw, 120px);
+            font-weight: 700;
+            color: #e8e5ff;
+            letter-spacing: 6px;
+            text-align: center;
+            animation: wordImpact 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes wordImpact {
+            0% {
+                transform: scale(0.3) rotateX(90deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.15) rotateX(0deg);
+            }
+            100% {
+                transform: scale(1) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+
+        .power-word.pink { color: #ec4899; }
+        .power-word.green { color: #10b981; }
+        .power-word.blue { color: #3b82f6; }
+
+        /* Screen 9: Stats */
+        .screen-9 {
+            background: linear-gradient(180deg, #FFF3E0 0%, #FFE0B2 100%);
+        }
+
+        .stats-container {
+            text-align: center;
+            padding: 0 30px;
+        }
+
+        .stat-emoji {
+            font-size: 100px;
+            margin-bottom: 40px;
+            animation: trophyBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .stat-number {
+            font-size: clamp(75px, 18vw, 130px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .stat-text {
+            font-size: clamp(26px, 6.5vw, 40px);
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 15px;
+        }
+
+        .stat-subtext {
+            font-size: clamp(16px, 4vw, 22px);
+            color: #666;
+            font-weight: 500;
+        }
+
+        /* Screen 10: Final - AURA */
+        .screen-10 {
+            background: #000000;
+        }
+
+        .final-aura {
+            font-size: clamp(80px, 20vw, 150px);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 8px;
+            animation: finalGlow 2s ease-in-out infinite;
+            text-align: center;
+        }
+
+        @keyframes finalGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(236, 72, 153, 0.5));
+                transform: scale(1);
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.8));
+                transform: scale(1.05);
+            }
+        }
+
+        .final-tagline {
+            font-size: clamp(20px, 5vw, 32px);
+            color: rgba(255,255,255,0.9);
+            text-align: center;
+            margin-top: 30px;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Screen 1: AURA Logo -->
+    <div class="screen screen-1 active">
+        <div class="logo-container">
+            <div class="logo-icon">✨</div>
+            <div class="logo-text">AURA</div>
+            <div class="logo-subtitle">AI Dating Assistant</div>
+        </div>
+    </div>
+
+    <!-- Screen 2: Problem - Texting Anxiety -->
+    <div class="screen screen-2">
+        <div class="problem-container">
+            <div class="floating-emoji emoji-left">😰</div>
+            <div class="floating-emoji emoji-right">🤔</div>
+            
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <div class="typing-dots">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                    <div class="draft-messages">
+                        <div class="draft-msg">Hey, what's up?</div>
+                        <div class="draft-msg">Lol that's cool</div>
+                        <div class="draft-msg">Yeah...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="problem-text">
+                Tired of<br><span class="highlight">texting anxiety?</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 3: Solution - AI Brain -->
+    <div class="screen screen-3">
+        <div class="solution-container">
+            <div class="brain-container">
+                <div class="brain-emoji">🧠</div>
+                <div class="sparkles">
+                    <div class="sparkle">✨</div>
+                    <div class="sparkle">✨</div>
+                    <div class="sparkle">✨</div>
+                    <div class="sparkle">✨</div>
+                </div>
+            </div>
+            
+            <div class="solution-text">
+                Meet your<br><span class="highlight">AI coach</span>
+            </div>
+            <div class="solution-subtext">
+                Powered by advanced AI
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 4: Chat Example -->
+    <div class="screen screen-4">
+        <h2 class="chat-title">See it in action</h2>
+        
+        <div class="chat-demo">
+            <div class="chat-header">
+                <div class="chat-avatar">💫</div>
+                <div class="chat-info">
+                    <h3>Aura AI</h3>
+                    <p>Your dating assistant</p>
+                </div>
+            </div>
+            
+            <div class="chat-body" id="chat-messages">
+                <!-- Messages will be added dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen 5: CONNECT -->
+    <div class="screen screen-5">
+        <div class="power-word pink">CONNECT</div>
+    </div>
+
+    <!-- Screen 6: CHARM -->
+    <div class="screen screen-6">
+        <div class="power-word green">CHARM</div>
+    </div>
+
+    <!-- Screen 7: FLIRT -->
+    <div class="screen screen-7">
+        <div class="power-word blue">FLIRT</div>
+    </div>
+
+    <!-- Screen 8: DATES -->
+    <div class="screen screen-8">
+        <div class="power-word">DATES</div>
+    </div>
+
+    <!-- Screen 9: Stats -->
+    <div class="screen screen-9">
+        <div class="stats-container">
+            <div class="stat-emoji">🏆</div>
+            <div class="stat-number">93%</div>
+            <div class="stat-text">Better Conversations</div>
+            <div class="stat-subtext">Users report more meaningful connections</div>
+        </div>
+    </div>
+
+    <!-- Screen 10: Final AURA -->
+    <div class="screen screen-10">
+        <div>
+            <div class="final-aura">AURA</div>
+            <div class="final-tagline">Your path to real connections</div>
+        </div>
+    </div>
+
+    <script>
+        let currentScreen = 1;
+        const totalScreens = 10;
+
+        const chatMessages = [
+            { type: 'received', text: 'What should I say to her? 😅', delay: 500 },
+            { type: 'sent', text: 'Tell me about her profile!', delay: 1200 },
+            { type: 'received', text: 'She loves hiking and coffee ☕', delay: 2000 },
+            { type: 'sent', text: 'Perfect! Try: "Coffee before the hike, or after? Either way, I\'m in! ☕⛰️"', delay: 3000 }
+        ];
+
+        function transitionToScreen(screenNumber) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.querySelector(`.screen-${screenNumber}`).classList.add('active');
+
+            // Add chat messages when screen 4 is shown
+            if (screenNumber === 4) {
+                setTimeout(() => addChatMessages(), 300);
+            }
+        }
+
+        function addChatMessages() {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+            
+            chatMessages.forEach((msg, index) => {
+                setTimeout(() => {
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${msg.type}`;
+                    messageDiv.textContent = msg.text;
+                    container.appendChild(messageDiv);
+                }, msg.delay);
+            });
+        }
+
+        function startSequence() {
+            // Screen 1: Logo (2s)
+            setTimeout(() => {
+                transitionToScreen(2); // Problem
+                
+                setTimeout(() => {
+                    transitionToScreen(3); // Solution
+                    
+                    setTimeout(() => {
+                        transitionToScreen(4); // Chat Example
+                        
+                        setTimeout(() => {
+                            transitionToScreen(5); // CONNECT
+                            
+                            setTimeout(() => {
+                                transitionToScreen(6); // CHARM
+                                
+                                setTimeout(() => {
+                                    transitionToScreen(7); // FLIRT
+                                    
+                                    setTimeout(() => {
+                                        transitionToScreen(8); // DATES
+                                        
+                                        setTimeout(() => {
+                                            transitionToScreen(9); // Stats
+                                            
+                                            setTimeout(() => {
+                                                transitionToScreen(10); // Final AURA
+                                                
+                                                // Notify Swift or reload
+                                                setTimeout(() => {
+                                                    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.videoFinished) {
+                                                        window.webkit.messageHandlers.videoFinished.postMessage('complete');
+                                                    } else {
+                                                        // Standalone testing - reload
+                                                        setTimeout(() => {
+                                                            location.reload();
+                                                        }, 1000);
+                                                    }
+                                                }, 3000);
+                                            }, 1000); // Show stats for 1s
+                                        }, 1000); // Show DATES for 1s
+                                    }, 900); // Show FLIRT for 0.9s
+                                }, 900); // Show CHARM for 0.9s
+                            }, 900); // Show CONNECT for 0.9s
+                        }, 4000); // Show chat for 4s
+                    }, 2500); // Show solution for 2.5s
+                }, 2500); // Show problem for 2.5s
+            }, 2000); // Show logo for 2s
+        }
+
+        // Start the sequence
+        startSequence();
+    </script>
+</body>
+</html>

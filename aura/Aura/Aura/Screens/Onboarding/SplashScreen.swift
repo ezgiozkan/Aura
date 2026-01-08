@@ -13,7 +13,7 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            WebView(htmlFileName: "dating-assistant-intro", onFinished: {
+            WebView(htmlFileName: "aura-intro-cinematic", onFinished: {
                 print("🎬 Video finished!")
                 onFinished()
             })

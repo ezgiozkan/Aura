@@ -15,7 +15,7 @@ struct PageIndicator: View {
         HStack(spacing: 6) {
             ForEach(0..<totalCount, id: \.self) { index in
                 Capsule()
-                    .fill(index == currentIndex ? Color.white : Color.white.opacity(0.3))
+                    .fill(index == currentIndex ? Color.purple : Color.purple.opacity(0.3))
                     .frame(width: index == currentIndex ? 22 : 6, height: 6)
             }
         }

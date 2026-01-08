@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Aura - AI Dating Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            font-family: 'Fredoka', -apple-system, BlinkMacSystemFont, sans-serif;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Animated gradient background */
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 30%, #f093fb 60%, #feca57 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating gradient bubbles */
+        .bubbles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 8s ease-in-out infinite;
+            filter: blur(40px);
+        }
+
+        .bubble-1 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ff6b9d, transparent);
+            left: 10%;
+            top: 20%;
+            animation-delay: 0s;
+            animation-duration: 10s;
+        }
+
+        .bubble-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, #c471f5, transparent);
+            right: 15%;
+            top: 10%;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .bubble-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #feca57, transparent);
+            left: 20%;
+            bottom: 15%;
+            animation-delay: 4s;
+            animation-duration: 11s;
+        }
+
+        .bubble-4 {
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, #48dbfb, transparent);
+            right: 25%;
+            bottom: 20%;
+            animation-delay: 1s;
+            animation-duration: 9s;
+        }
+
+        .bubble-5 {
+            width: 220px;
+            height: 220px;
+            background: radial-gradient(circle, #ff9ff3, transparent);
+            left: 50%;
+            top: 40%;
+            animation-delay: 3s;
+            animation-duration: 13s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px) scale(1);
+            }
+            25% {
+                transform: translateY(-30px) translateX(30px) scale(1.1);
+            }
+            50% {
+                transform: translateY(-50px) translateX(-20px) scale(0.9);
+            }
+            75% {
+                transform: translateY(-20px) translateX(40px) scale(1.05);
+            }
+        }
+
+        /* Floating emojis */
+        .emoji {
+            position: absolute;
+            font-size: 60px;
+            animation: emojiFloat 6s ease-in-out infinite;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+        }
+
+        .emoji-1 { left: 8%; top: 15%; animation-delay: 0s; }
+        .emoji-2 { right: 12%; top: 25%; animation-delay: 1.5s; font-size: 50px; }
+        .emoji-3 { left: 15%; top: 55%; animation-delay: 3s; font-size: 55px; }
+        .emoji-4 { right: 18%; top: 65%; animation-delay: 4.5s; }
+        .emoji-5 { left: 50%; top: 8%; animation-delay: 2s; font-size: 45px; }
+        .emoji-6 { right: 8%; bottom: 12%; animation-delay: 3.5s; font-size: 65px; }
+        .emoji-7 { left: 25%; bottom: 18%; animation-delay: 1s; font-size: 48px; }
+        .emoji-8 { right: 35%; top: 12%; animation-delay: 5s; font-size: 52px; }
+
+        @keyframes emojiFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-25px) rotate(5deg);
+            }
+            50% {
+                transform: translateY(-40px) rotate(-5deg);
+            }
+            75% {
+                transform: translateY(-15px) rotate(3deg);
+            }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: absolute;
+            font-size: 30px;
+            animation: sparkleAnimation 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.8));
+        }
+
+        .sparkle-1 { left: 20%; top: 30%; animation-delay: 0s; }
+        .sparkle-2 { right: 25%; top: 45%; animation-delay: 1s; }
+        .sparkle-3 { left: 40%; bottom: 25%; animation-delay: 2s; }
+        .sparkle-4 { right: 15%; bottom: 35%; animation-delay: 0.5s; }
+        .sparkle-5 { left: 60%; top: 20%; animation-delay: 1.5s; }
+        .sparkle-6 { right: 40%; top: 55%; animation-delay: 2.5s; }
+
+        @keyframes sparkleAnimation {
+            0%, 100% {
+                transform: scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        /* Mini profile cards flying around */
+        .mini-card {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            overflow: hidden;
+            animation: cardFly 10s ease-in-out infinite;
+        }
+
+        .mini-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-mini-1 { 
+            left: 5%; 
+            top: 40%; 
+            animation-delay: 0s;
+            transform: rotate(-8deg);
+        }
+        .card-mini-2 { 
+            right: 8%; 
+            top: 15%; 
+            animation-delay: 2s;
+            transform: rotate(12deg);
+        }
+        .card-mini-3 { 
+            left: 12%; 
+            bottom: 22%; 
+            animation-delay: 4s;
+            transform: rotate(-15deg);
+        }
+        .card-mini-4 { 
+            right: 15%; 
+            bottom: 40%; 
+            animation-delay: 1s;
+            transform: rotate(10deg);
+        }
+        .card-mini-5 { 
+            left: 45%; 
+            top: 12%; 
+            animation-delay: 3s;
+            transform: rotate(-5deg);
+        }
+
+        @keyframes cardFly {
+            0%, 100% {
+                transform: translateY(0px) rotate(-8deg) scale(1);
+                opacity: 0.8;
+            }
+            25% {
+                transform: translateY(-30px) rotate(5deg) scale(1.1);
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-50px) rotate(-12deg) scale(0.95);
+                opacity: 0.9;
+            }
+            75% {
+                transform: translateY(-25px) rotate(8deg) scale(1.05);
+                opacity: 0.95;
+            }
+        }
+
+        /* Hearts floating up */
+        .heart-float {
+            position: absolute;
+            font-size: 35px;
+            animation: heartRise 8s ease-in infinite;
+            opacity: 0;
+        }
+
+        .heart-1 { left: 25%; bottom: -50px; animation-delay: 0s; }
+        .heart-2 { left: 45%; bottom: -50px; animation-delay: 2s; }
+        .heart-3 { left: 65%; bottom: -50px; animation-delay: 4s; }
+        .heart-4 { left: 15%; bottom: -50px; animation-delay: 1s; }
+        .heart-5 { left: 75%; bottom: -50px; animation-delay: 3s; }
+
+        @keyframes heartRise {
+            0% {
+                transform: translateY(0) scale(0.8);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-120vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Confetti particles */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            animation: confettiFall 8s linear infinite;
+            opacity: 0;
+        }
+
+        .confetti-1 { left: 10%; top: -20px; animation-delay: 0s; background: #ff6b9d; }
+        .confetti-2 { left: 25%; top: -20px; animation-delay: 1.5s; background: #c471f5; }
+        .confetti-3 { left: 40%; top: -20px; animation-delay: 3s; background: #feca57; }
+        .confetti-4 { left: 55%; top: -20px; animation-delay: 0.5s; background: #48dbfb; }
+        .confetti-5 { left: 70%; top: -20px; animation-delay: 2s; background: #ff9ff3; }
+        .confetti-6 { left: 85%; top: -20px; animation-delay: 2.5s; background: #ff6b9d; }
+        .confetti-7 { left: 15%; top: -20px; animation-delay: 4s; background: #feca57; }
+        .confetti-8 { left: 60%; top: -20px; animation-delay: 1s; background: #c471f5; }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(120vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Message bubbles floating */
+        .message-bubble {
+            position: absolute;
+            background: white;
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            animation: bubbleFloat 8s ease-in-out infinite;
+            max-width: 160px;
+        }
+
+        .bubble-msg-1 {
+            left: 10%;
+            top: 35%;
+            animation-delay: 0s;
+        }
+
+        .bubble-msg-2 {
+            right: 12%;
+            top: 50%;
+            animation-delay: 2s;
+        }
+
+        .bubble-msg-3 {
+            left: 55%;
+            bottom: 25%;
+            animation-delay: 4s;
+        }
+
+        @keyframes bubbleFloat {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(-30px) scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        /* Rizz quotes floating around */
+        .rizz-quote {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            animation: quoteFloat 10s ease-in-out infinite;
+            max-width: 220px;
+            line-height: 1.4;
+            color: #1a1a2e;
+        }
+
+        .quote-1 {
+            left: 8%;
+            top: 20%;
+            animation-delay: 0s;
+        }
+
+        .quote-2 {
+            right: 10%;
+            top: 35%;
+            animation-delay: 2s;
+        }
+
+        .quote-3 {
+            left: 45%;
+            bottom: 25%;
+            animation-delay: 4s;
+        }
+
+        @keyframes quoteFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(-2deg) scale(1);
+                opacity: 0.85;
+            }
+            50% {
+                transform: translateY(-35px) rotate(2deg) scale(1.05);
+                opacity: 1;
+            }
+        }
+
+        /* Glowing ring effect */
+        .glow-ring {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: ringPulse 4s ease-in-out infinite;
+        }
+
+        .ring-1 { 
+            left: 50%; 
+            top: 50%; 
+            transform: translate(-50%, -50%);
+            animation-delay: 0s; 
+        }
+        .ring-2 { 
+            left: 50%; 
+            top: 50%; 
+            transform: translate(-50%, -50%);
+            animation-delay: 1s; 
+        }
+        .ring-3 { 
+            left: 50%; 
+            top: 50%; 
+            transform: translate(-50%, -50%);
+            animation-delay: 2s; 
+        }
+
+        @keyframes ringPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(2);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated gradient background -->
+    <div class="gradient-bg"></div>
+
+    <!-- Floating bubbles -->
+    <div class="bubbles-container">
+        <div class="bubble bubble-1"></div>
+        <div class="bubble bubble-2"></div>
+        <div class="bubble bubble-3"></div>
+        <div class="bubble bubble-4"></div>
+        <div class="bubble bubble-5"></div>
+    </div>
+
+    <!-- Glowing rings -->
+    <div class="glow-ring ring-1"></div>
+    <div class="glow-ring ring-2"></div>
+    <div class="glow-ring ring-3"></div>
+
+    <!-- Floating emojis -->
+    <div class="emoji emoji-1">💕</div>
+    <div class="emoji emoji-2">✨</div>
+    <div class="emoji emoji-3">💬</div>
+    <div class="emoji emoji-4">❤️</div>
+    <div class="emoji emoji-5">🌟</div>
+    <div class="emoji emoji-6">💖</div>
+    <div class="emoji emoji-7">😊</div>
+    <div class="emoji emoji-8">💋</div>
+
+    <!-- Sparkles -->
+    <div class="sparkle sparkle-1">✨</div>
+    <div class="sparkle sparkle-2">⭐</div>
+    <div class="sparkle sparkle-3">✨</div>
+    <div class="sparkle sparkle-4">⭐</div>
+    <div class="sparkle sparkle-5">✨</div>
+    <div class="sparkle sparkle-6">⭐</div>
+
+    <!-- Mini profile cards -->
+    <div class="mini-card card-mini-1">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=250&fit=crop" alt="Profile">
+    </div>
+    <div class="mini-card card-mini-2">
+        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=250&fit=crop" alt="Profile">
+    </div>
+    <div class="mini-card card-mini-3">
+        <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=200&h=250&fit=crop" alt="Profile">
+    </div>
+    <div class="mini-card card-mini-4">
+        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=250&fit=crop" alt="Profile">
+    </div>
+    <div class="mini-card card-mini-5">
+        <img src="https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=200&h=250&fit=crop" alt="Profile">
+    </div>
+
+    <!-- Hearts floating up -->
+    <div class="heart-float heart-1">💝</div>
+    <div class="heart-float heart-2">💗</div>
+    <div class="heart-float heart-3">💖</div>
+    <div class="heart-float heart-4">💕</div>
+    <div class="heart-float heart-5">❤️</div>
+
+    <!-- Confetti -->
+    <div class="confetti confetti-1"></div>
+    <div class="confetti confetti-2"></div>
+    <div class="confetti confetti-3"></div>
+    <div class="confetti confetti-4"></div>
+    <div class="confetti confetti-5"></div>
+    <div class="confetti confetti-6"></div>
+    <div class="confetti confetti-7"></div>
+    <div class="confetti confetti-8"></div>
+
+    <!-- Message bubbles -->
+    <div class="message-bubble bubble-msg-1">Hey! 😊</div>
+    <div class="message-bubble bubble-msg-2">Coffee? ☕</div>
+    <div class="message-bubble bubble-msg-3">Let's chat! 💬</div>
+
+
+
+    <!-- Rizz quotes floating -->
+    <div class="rizz-quote quote-1">"Are you a magician? Because whenever I look at you, everyone else disappears" ✨</div>
+    <div class="rizz-quote quote-2">"I must be a snowflake, because I've fallen for you" 💋</div>
+    <div class="rizz-quote quote-3">"Your hand looks heavy, let me hold it for you" 😏</div>
+
+    <script>
+        // After 10 seconds, notify Swift or reload
+        setTimeout(() => {
+            if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.splashFinished) {
+                window.webkit.messageHandlers.splashFinished.postMessage('complete');
+            } else {
+                // Standalone testing - reload after 1s
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            }
+        }, 10000);
+    </script>
+</body>
+</html>

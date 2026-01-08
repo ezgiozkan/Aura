@@ -9,8 +9,8 @@ import SwiftUI
 
 struct PrimaryButton: View {
     let titleKey: LocalizedStringKey
-    var background: Color = .white
-    var foreground: Color = .black
+    var background: Color = .black
+    var foreground: Color = .white
     var height: CGFloat = 56
     var cornerRadius: CGFloat = 28
     var isDisabled: Bool = false

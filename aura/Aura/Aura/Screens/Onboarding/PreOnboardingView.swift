@@ -13,7 +13,7 @@ struct PreOnboardingView: View {
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            WebView(htmlFileName: "luxury-splash-enhanced", onFinished: {
+            WebView(htmlFileName: "aura-playful-splash", onFinished: {
             })
                 .ignoresSafeArea()
 

@@ -13,20 +13,16 @@
 
 /* Onboarding - Titles */
 
-"onboarding_title_first_impression" = "Master Your First Impression";
-"onboarding_title_context" = "It Understands the Context";
-"onboarding_title_upload" = "Upload a Chat";
-"onboarding_visual_match" = "Discover your visual match";
-"onboarding_title_final" = "Final Step";
+"onboarding_title_first_impression" = "Tired of Texting Anxiety?";
+"onboarding_title_context" = "Real Results, Real Love";
+"onboarding_title_upload" = "Better Dates, Zero Stress";
+"onboarding_visual_match" = "See What They Really Mean";
 
 /* Onboarding - Descriptions */
 
-"onboarding_desc_first_impression" = "Spark connections with witty, charming, and effortlessly perfect replies, crafted by AI for every unique moment.";
-"onboarding_desc_context" = "Aura reads between the lines — tone, intent, and energy — to suggest replies that truly fit the moment.";
-"onboarding_desc_upload" = "Learn from real conversations that work. Upload a chat and see what keeps the spark alive.";
-"onboarding_desc_visual" = "Upload your photo and your crush’s photo. AI
-evaluates visual harmony and match potential.";
-"onboarding_desc_final" = "Tell us a bit about yourself so we can personalize your experience.";
+"onboarding_desc_first_impression" = "Stop staring at the screen wondering what to say. The waiting game ends now.";
+"onboarding_desc_context" = "Join a community that stopped second-guessing and started connecting authentically.";
+"onboarding_desc_visual" = "Aura helps you understand the hidden dynamicsc in your chats.";
 
 /* Final Step */
 "final_step_sex_title" = "Sex";

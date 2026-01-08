@@ -16,7 +16,7 @@ struct StartView: View {
             case .videoSplash:
                 SplashView(onFinished: {
                     withAnimation(.easeInOut(duration: 0.35)) {
-                        step = .preOnboarding
+                        step = .onboarding
                     }
                 })
 

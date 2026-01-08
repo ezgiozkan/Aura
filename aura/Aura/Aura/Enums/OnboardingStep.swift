@@ -12,7 +12,6 @@ enum OnboardingStep: Int, CaseIterable {
     case context
     case uploadChat
     case visualMatch
-    case final
 }
 
 extension OnboardingStep {
@@ -26,23 +25,19 @@ extension OnboardingStep {
             return "onboarding_title_upload"
         case .visualMatch:
             return "onboarding_visual_match"
-        case .final:
-            return "onboarding_title_final"
         }
     }
 
-    var descriptionKey: String {
+    var descriptionKey: String? {
         switch self {
         case .firstImpression:
             return "onboarding_desc_first_impression"
         case .context:
             return "onboarding_desc_context"
         case .uploadChat:
-            return "onboarding_desc_upload"
+            return nil
         case .visualMatch:
             return "onboarding_desc_visual"
-        case .final:
-            return "onboarding_desc_final"
         }
     }
 }
