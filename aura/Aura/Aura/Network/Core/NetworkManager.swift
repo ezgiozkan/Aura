@@ -59,6 +59,43 @@ final class NetworkManager {
         }
     }
     
+    /// Multipart/form-data upload request
+    /// - Parameters:
+    ///   - endpoint: API endpoint
+    ///   - multipartFormData: Closure to build multipart form data
+    ///   - responseType: Codable response type
+    /// - Returns: Response object or Error
+    func upload<T: Codable>(
+        endpoint: APIEndpoint,
+        multipartFormData: @escaping (MultipartFormData) -> Void,
+        responseType: T.Type
+    ) async throws -> T {
+        return try await withCheckedThrowingContinuation { continuation in
+            session.upload(
+                multipartFormData: multipartFormData,
+                to: endpoint.url,
+                method: endpoint.method,
+                headers: endpoint.headers
+            )
+            .validate()
+            .responseDecodable(of: T.self) { response in
+                
+                #if DEBUG
+                self.logRequest(response: response, endpoint: endpoint)
+                #endif
+                
+                switch response.result {
+                case .success(let data):
+                    continuation.resume(returning: data)
+                    
+                case .failure(let error):
+                    let networkError = self.handleError(response: response, error: error)
+                    continuation.resume(throwing: networkError)
+                }
+            }
+        }
+    }
+    
     // MARK: - Error Handling
     private func handleError(response: AFDataResponse<some Any>, error: AFError) -> NetworkError {
         if let statusCode = response.response?.statusCode {

@@ -42,9 +42,9 @@ enum APIEndpoint {
     }
     
     var headers: HTTPHeaders {
-        return [
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        ]
+        switch self {
+        case .checkAura, .generateRizz:
+            return ["Accept": "application/json"]
+        }
     }
 }
