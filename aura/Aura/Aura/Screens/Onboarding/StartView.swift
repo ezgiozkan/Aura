@@ -8,29 +8,44 @@
 import SwiftUI
 
 struct StartView: View {
-    @State private var step: AppFlowStep = .onboarding
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
+    @State private var step: AppFlowStep = .videoSplash
 
     var body: some View {
         ZStack {
-            switch step {
-            case .videoSplash:
-                SplashView(onFinished: {
-                    withAnimation(.easeInOut(duration: 0.35)) {
-                        step = .onboarding
-                    }
-                })
+            if hasCompletedOnboarding {
+                AppTabView()
+            } else {
+                switch step {
+                case .videoSplash:
+                    SplashView(onFinished: {
+                        withAnimation(.easeInOut(duration: 0.35)) {
+                            step = .onboarding
+                        }
+                    })
 
-            case .preOnboarding:
-                PreOnboardingView(onFinished: {
-                    withAnimation(.easeInOut(duration: 0.35)) {
-                        step = .onboarding
-                    }
-                })
+                case .preOnboarding:
+                    PreOnboardingView(onFinished: {
+                        withAnimation(.easeInOut(duration: 0.35)) {
+                            step = .onboarding
+                        }
+                    })
 
-            case .onboarding:
-                OnboardingView()
+                case .onboarding:
+                    OnboardingView()
+
+                case .completed:
+                    AppTabView()
+                }
             }
         }
-        .background(Color("darkPurple").ignoresSafeArea())
+        .ignoresSafeArea()
+        .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
+            if newValue {
+                withAnimation(.easeInOut(duration: 0.35)) {
+                    step = .completed
+                }
+            }
+        }
     }
 }

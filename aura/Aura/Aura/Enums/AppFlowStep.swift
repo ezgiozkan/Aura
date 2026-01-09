@@ -11,4 +11,5 @@ enum AppFlowStep {
     case videoSplash
     case preOnboarding
     case onboarding
+    case completed
 }
