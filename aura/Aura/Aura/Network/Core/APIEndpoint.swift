@@ -31,7 +31,12 @@ enum APIEndpoint {
     }
 
     var url: String {
-        return Self.baseURL + path
+        switch self {
+        case .checkAura(let request):
+            return Self.baseURL + path + "?language=\(request.language)"
+        case .generateRizz:
+            return Self.baseURL + path
+        }
     }
 
     var encoding: ParameterEncoding {

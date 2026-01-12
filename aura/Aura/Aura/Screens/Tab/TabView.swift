@@ -20,6 +20,8 @@ struct AppTabView: View {
                     .tag(TabItem.analyzer)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
+            .highPriorityGesture(DragGesture())
+            
             CustomTabBar(selectedTab: $selectedTab)
         }
         .ignoresSafeArea(.keyboard)

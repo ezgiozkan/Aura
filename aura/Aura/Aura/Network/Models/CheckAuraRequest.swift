@@ -11,9 +11,9 @@ import Alamofire
 struct CheckAuraRequest {
     let meImageData: Data
     let targetImageData: Data
+    var language: String = "Turkish"
     var meFileName: String = "me.png"
     var targetFileName: String = "target.png"
-
     var meMimeType: String = "image/png"
     var targetMimeType: String = "image/png"
 
