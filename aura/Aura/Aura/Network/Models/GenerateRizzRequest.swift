@@ -13,15 +13,18 @@ struct GenerateRizzRequest {
     let imageFileName: String
     let imageMimeType: String
     let extraContext: String?
+    let language: String
 
     init(imageData: Data,
          imageFileName: String = "image.png",
          imageMimeType: String = "image/png",
-         extraContext: String? = nil) {
+         extraContext: String? = nil,
+         language: String = "en") {
         self.imageData = imageData
         self.imageFileName = imageFileName
         self.imageMimeType = imageMimeType
         self.extraContext = extraContext
+        self.language = language
     }
 
     func queryParameters() -> Parameters {
@@ -29,14 +32,18 @@ struct GenerateRizzRequest {
         if let extraContext, extraContext.isEmpty == false {
             params["extra_context"] = extraContext
         }
+        params["language"] = language
         return params
     }
 
-    /// Adds multipart parts for this request.
     func appendMultipart(to multipart: MultipartFormData) {
         multipart.append(imageData,
                          withName: "image",
                          fileName: imageFileName,
                          mimeType: imageMimeType)
+
+        if let languageData = language.data(using: .utf8) {
+            multipart.append(languageData, withName: "language")
+        }
     }
 }

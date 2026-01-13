@@ -59,3 +59,13 @@
 "crush_analysis_green_flags_title" = "GREEN FLAGS";
 "crush_analysis_red_flags_title" = "POTENTIAL FRICTION";
 "crush_analysis_verdict_title" = "AURA'S VERDICT";
+
+// MARK: - Generate Rizz
+"reply_to_story" = "Reply to Story";
+"analyze_story_description" = "Let Aura analyze this story and craft the perfect reply";
+"replies_section_title" = "REPLIES";
+"generate_reply_button" = "Generate Reply";
+
+// MARK: - Generate Message Reply
+"reply_to_message" = "Reply to Message";
+"analyze_message_description" = "AI will analyze the message screenshot and suggest the best replies.";

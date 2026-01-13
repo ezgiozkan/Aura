@@ -11,6 +11,7 @@ import Alamofire
 enum APIEndpoint {
     case checkAura(request: CheckAuraRequest)
     case generateRizz(request: GenerateRizzRequest)
+    case generateChatReply(request: GenerateChatReplyRequest)
 
     static let baseURL = "https://aura-production-e333.up.railway.app"
 
@@ -20,12 +21,14 @@ enum APIEndpoint {
             return "/check-aura"
         case .generateRizz:
             return "/generate-rizz"
+        case .generateChatReply:
+            return "/generate-chat-reply"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .checkAura, .generateRizz:
+        case .checkAura, .generateRizz, .generateChatReply:
             return .post
         }
     }
@@ -34,21 +37,23 @@ enum APIEndpoint {
         switch self {
         case .checkAura(let request):
             return Self.baseURL + path + "?language=\(request.language)"
-        case .generateRizz:
-            return Self.baseURL + path
+        case .generateRizz(let request):
+            return Self.baseURL + path + "?language=\(request.language)"
+        case .generateChatReply(let request):
+            return Self.baseURL + path + "?language=\(request.language)"
         }
     }
 
     var encoding: ParameterEncoding {
         switch self {
-        case .checkAura, .generateRizz:
+        case .checkAura, .generateRizz, .generateChatReply:
             return JSONEncoding.default
         }
     }
     
     var headers: HTTPHeaders {
         switch self {
-        case .checkAura, .generateRizz:
+        case .checkAura, .generateRizz, .generateChatReply:
             return ["Accept": "application/json"]
         }
     }
