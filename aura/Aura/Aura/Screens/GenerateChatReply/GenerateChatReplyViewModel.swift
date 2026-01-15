@@ -16,6 +16,7 @@ final class GenerateChatReplyViewModel {
     var allReplies: [ChatReply] = []
     var chatReplyResponse: GenerateChatReplyResponse?
     var errorMessage: String?
+    var hasInitiallyLoaded: Bool = false
     
     private let chatReplyService = ChatReplyService.shared
     
@@ -34,12 +35,18 @@ final class GenerateChatReplyViewModel {
     }
     
     @MainActor
-    func generateChatReply() async {
+    func generateChatReply(withContext context: String? = nil, tone: String = "friendly") async {
+        guard !hasInitiallyLoaded else {
+            print("⚠️ Already loaded, skipping duplicate request")
+            return
+        }
+        
         guard let photo = selectedPhoto,
               let imageData = photo.jpegData(compressionQuality: 0.8) else { return }
 
         print("✅ Image data ready: \(imageData.count) bytes")
         
+        hasInitiallyLoaded = true
         isAnalyzing = true
         errorMessage = nil
     
@@ -52,8 +59,8 @@ final class GenerateChatReplyViewModel {
                 imageData: imageData,
                 imageFileName: "message.jpg",
                 imageMimeType: "image/jpeg",
-                extraContext: nil,
-                tone: "friendly",
+                extraContext: context,
+                tone: tone,
                 language: currentLanguage
             )
 
@@ -78,11 +85,17 @@ final class GenerateChatReplyViewModel {
     }
 
     @MainActor
-    func generateMoreReplies() async {
+    func generateMoreReplies(withContext context: String? = nil, tone: String = "friendly") async {
         guard let photo = selectedPhoto,
               let imageData = photo.jpegData(compressionQuality: 0.8) else {
             return
         }
+
+        isAnalyzing = true
+        allReplies = []
+        errorMessage = nil
+        
+        let startTime = Date()
         
         do {
             let currentLanguage = Locale.current.language.languageCode?.identifier ?? "en"
@@ -91,17 +104,28 @@ final class GenerateChatReplyViewModel {
                 imageData: imageData,
                 imageFileName: "message.jpg",
                 imageMimeType: "image/jpeg",
-                extraContext: nil,
-                tone: "friendly",
+                extraContext: context,
+                tone: tone,
                 language: currentLanguage
             )
 
             let response = try await chatReplyService.generateChatReply(request: request)
+            
+            let elapsedTime = Date().timeIntervalSince(startTime)
+            let minimumDuration: TimeInterval = 3.0
+            
+            if elapsedTime < minimumDuration {
+                let remainingTime = minimumDuration - elapsedTime
+                try? await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000))
+            }
 
-            allReplies.append(contentsOf: response.replies)
+            allReplies = response.replies
             
         } catch {
+            errorMessage = error.localizedDescription
             print("❌ Error generating more: \(error.localizedDescription)")
         }
+        
+        isAnalyzing = false
     }
 }

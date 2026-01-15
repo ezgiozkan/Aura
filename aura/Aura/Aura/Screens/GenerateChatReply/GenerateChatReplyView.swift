@@ -11,10 +11,8 @@ struct GenerateChatReplyView: View {
     let selectedImage: UIImage
     @State private var viewModel = GenerateChatReplyViewModel()
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedToneIndex: Int = 0
-    
-    let tones = ["😊", "😎", "🤗", "💬"]
-    
+    @State private var selectedTone: ReplyTone = .friendly
+
     var body: some View {
         ZStack {
             Color.homeGradient
@@ -39,7 +37,7 @@ struct GenerateChatReplyView: View {
                         .font(.system(size: 24, weight: .bold))
                         .foregroundStyle(.primary)
                 }
-                .padding(.top, 50)
+                .padding(.top, 58)
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
@@ -86,17 +84,24 @@ struct GenerateChatReplyView: View {
                                 }
 
                                 ForEach(viewModel.allReplies, id: \.text) { reply in
-                                    ChatReplyCard(reply: reply)
+                                    ReplyCard(reply: reply.text)
+                                        .transition(.asymmetric(
+                                            insertion: .scale.combined(with: .opacity),
+                                            removal: .scale.combined(with: .opacity)
+                                        ))
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: viewModel.allReplies)
 
                             HStack(spacing: 12) {
                                 Button(action: {
-                                    selectedToneIndex = (selectedToneIndex + 1) % tones.count
+                                    let currentIndex = selectedTone.rawValue
+                                    let nextIndex = (currentIndex + 1) % ReplyTone.allCases.count
+                                    selectedTone = ReplyTone(rawValue: nextIndex) ?? .friendly
                                 }) {
-                                    Text(tones[selectedToneIndex])
+                                    Text(selectedTone.emoji)
                                         .font(.system(size: 28))
                                         .frame(width: 56, height: 56)
                                         .background(Circle().fill(Color.black.opacity(0.8)))
@@ -109,13 +114,35 @@ struct GenerateChatReplyView: View {
                                     foreground: .white
                                 ) {
                                     Task {
-                                        await viewModel.generateMoreReplies()
+                                        await viewModel.generateMoreReplies(withContext: selectedTone.context, tone: selectedTone.name)
                                     }
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 40)
-
+                        } else {
+                            VStack(spacing: 16) {
+                                HStack(spacing: 12) {
+                                    Rectangle()
+                                        .fill(Color.secondary.opacity(0.3))
+                                        .frame(height: 1)
+                                    
+                                    Text(LocalizedStringKey("replies_section_title"))
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundStyle(.secondary)
+                                        .tracking(2)
+                                    
+                                    Rectangle()
+                                        .fill(Color.secondary.opacity(0.3))
+                                        .frame(height: 1)
+                                }
+                                
+                                ForEach(0..<3, id: \.self) { _ in
+                                    SkeletonReplyCard()
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
                         }
                         
                         Spacer()
@@ -123,65 +150,10 @@ struct GenerateChatReplyView: View {
                 }
             }
         }
-        .onAppear {
+        .task(id: selectedImage) {
             viewModel.selectedPhoto = selectedImage
-            Task {
-                await viewModel.generateChatReply()
-            }
+            await viewModel.generateChatReply(withContext: selectedTone.context, tone: selectedTone.name)
         }
-    }
-}
-
-struct ChatReplyCard: View {
-    let reply: ChatReply
-    @State private var isCopied = false
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(reply.tone)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.secondary)
-                    .textCase(.uppercase)
-                    .tracking(1)
-                
-                Spacer()
-                
-                Button(action: {
-                    UIPasteboard.general.string = reply.text
-                    isCopied = true
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        isCopied = false
-                    }
-                }) {
-                    HStack(spacing: 6) {
-                        Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
-                            .font(.system(size: 14, weight: .medium))
-                        Text(isCopied ? "Copied!" : "Copy")
-                            .font(.system(size: 12, weight: .medium))
-                    }
-                    .foregroundStyle(isCopied ? .green : .darkPurple)
-                }
-            }
-            
-            Text(reply.text)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(.primary)
-                .lineSpacing(4)
-            
-            if !reply.explanation.isEmpty {
-                Text(reply.explanation)
-                    .font(.system(size: 14, weight: .regular))
-                    .foregroundStyle(.secondary)
-                    .lineSpacing(2)
-            }
-        }
-        .padding(20)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.white.opacity(0.8))
-        )
     }
 }
 

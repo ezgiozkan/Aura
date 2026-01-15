@@ -19,6 +19,5 @@ struct GenerateRizzResponse: Codable {
 
 struct RizzOption: Codable {
     let text: String
-    let tone: String
     let explanation: String
 }

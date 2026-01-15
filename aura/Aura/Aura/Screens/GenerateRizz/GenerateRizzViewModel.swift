@@ -13,15 +13,10 @@ final class GenerateRizzViewModel {
     var selectedPhotoItem: PhotosPickerItem?
     var selectedPhoto: UIImage?
     var isAnalyzing: Bool = false
-    var allReplies: [String] = [
-        "Wow, bu harika görünüyor! 😍",
-        "Vay canına, bugün muhteşem görünüyorsun! ✨",
-        "Gözlerimi alamıyorum 🔥",
-        "Bu fotoğraf çok güzel olmuş! 💫",
-        "Kesinlikle harika bir görüntü 🌟"
-    ]
+    var allReplies: [String] = []
     var rizzResponse: GenerateRizzResponse?
     var errorMessage: String?
+    var hasInitiallyLoaded: Bool = false
     
     private let rizzService = RizzService.shared
     
@@ -40,12 +35,18 @@ final class GenerateRizzViewModel {
     }
     
     @MainActor
-    func generateRizz() async {
+    func generateRizz(withContext context: String? = nil) async {
+        guard !hasInitiallyLoaded else {
+            print("⚠️ Already loaded, skipping duplicate request")
+            return
+        }
+        
         guard let photo = selectedPhoto,
               let imageData = photo.jpegData(compressionQuality: 0.8) else { return }
 
         print("✅ Image data ready: \(imageData.count) bytes")
         
+        hasInitiallyLoaded = true
         isAnalyzing = true
         errorMessage = nil
     
@@ -58,7 +59,7 @@ final class GenerateRizzViewModel {
                 imageData: imageData,
                 imageFileName: "story.jpg",
                 imageMimeType: "image/jpeg",
-                extraContext: nil,
+                extraContext: context,
                 language: currentLanguage
             )
 
@@ -73,13 +74,7 @@ final class GenerateRizzViewModel {
             }
             
             rizzResponse = response
-            allReplies = [
-                "Wow, bu harika görünüyor! 😍",
-                "Vay canına, bugün muhteşem görünüyorsun! ✨",
-                "Gözlerimi alamıyorum 🔥",
-                "Bu fotoğraf çok güzel olmuş! 💫",
-                "Kesinlikle harika bir görüntü 🌟"
-            ]
+            allReplies = response.options.map { $0.text }
             
         } catch {
             errorMessage = error.localizedDescription
@@ -89,11 +84,17 @@ final class GenerateRizzViewModel {
     }
 
     @MainActor
-    func generateMoreRizz() async {
+    func generateMoreRizz(withContext context: String) async {
         guard let photo = selectedPhoto,
               let imageData = photo.jpegData(compressionQuality: 0.8) else {
             return
         }
+
+        isAnalyzing = true
+        allReplies = []
+        errorMessage = nil
+        
+        let startTime = Date()
         
         do {
             let currentLanguage = Locale.current.language.languageCode?.identifier ?? "en"
@@ -102,17 +103,27 @@ final class GenerateRizzViewModel {
                 imageData: imageData,
                 imageFileName: "story.jpg",
                 imageMimeType: "image/jpeg",
-                extraContext: nil,
+                extraContext: context.isEmpty ? nil : context,
                 language: currentLanguage
             )
 
             let response = try await rizzService.generateRizz(request: request)
-
-            let newReplies = response.options.map { $0.text }
-            allReplies.append(contentsOf: newReplies)
+            
+            let elapsedTime = Date().timeIntervalSince(startTime)
+            let minimumDuration: TimeInterval = 3.0
+            
+            if elapsedTime < minimumDuration {
+                let remainingTime = minimumDuration - elapsedTime
+                try? await Task.sleep(nanoseconds: UInt64(remainingTime * 1_000_000_000))
+            }
+            
+            allReplies = response.options.map { $0.text }
             
         } catch {
+            errorMessage = error.localizedDescription
             print("❌ Error generating more: \(error.localizedDescription)")
         }
+        
+        isAnalyzing = false
     }
 }

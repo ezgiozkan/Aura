@@ -40,6 +40,7 @@ struct StartView: View {
             }
         }
         .ignoresSafeArea()
+        .preferredColorScheme(.light)
         .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
             if newValue {
                 withAnimation(.easeInOut(duration: 0.35)) {

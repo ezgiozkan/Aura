@@ -22,7 +22,7 @@ struct HomeView: View {
                         .resizable()
                         .scaledToFit()
                         .frame(height: 90)
-                        .padding(.top, 5)
+                        .padding(.top, -10)
 
                     Spacer()
 
@@ -32,7 +32,7 @@ struct HomeView: View {
                             .scaledToFit()
                             .frame(maxWidth: 1000)
                             .offset(y: -70)
-                        
+
                         VStack(spacing: 12) {
                             Text("For accurate analysis, you can upload screenshots directly from WhatsApp, Instagram DMs, Telegram, iMessage, and more.")
                                 .font(.system(size: 14, weight: .regular))

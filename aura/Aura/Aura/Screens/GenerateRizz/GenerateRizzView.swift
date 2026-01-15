@@ -11,10 +11,8 @@ struct GenerateRizzView: View {
     let selectedImage: UIImage
     @State private var viewModel = GenerateRizzViewModel()
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedEmojiIndex: Int = 0
-    
-    let emojis = ["❤️", "👅", "🤗", "💋"]
-    
+    @State private var selectedRizzTone: RizzTone = .romantic
+
     var body: some View {
         ZStack {
             Color.homeGradient
@@ -87,16 +85,23 @@ struct GenerateRizzView: View {
 
                                 ForEach(viewModel.allReplies, id: \.self) { reply in
                                     ReplyCard(reply: reply)
+                                        .transition(.asymmetric(
+                                            insertion: .scale.combined(with: .opacity),
+                                            removal: .scale.combined(with: .opacity)
+                                        ))
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 16)
+                            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: viewModel.allReplies)
 
                             HStack(spacing: 12) {
                                 Button(action: {
-                                    selectedEmojiIndex = (selectedEmojiIndex + 1) % emojis.count
+                                    let currentIndex = selectedRizzTone.rawValue
+                                    let nextIndex = (currentIndex + 1) % RizzTone.allCases.count
+                                    selectedRizzTone = RizzTone(rawValue: nextIndex) ?? .romantic
                                 }) {
-                                    Text(emojis[selectedEmojiIndex])
+                                    Text(selectedRizzTone.emoji)
                                         .font(.system(size: 28))
                                         .frame(width: 56, height: 56)
                                         .background(Circle().fill(Color.black.opacity(0.8)))
@@ -108,12 +113,36 @@ struct GenerateRizzView: View {
                                     background: .darkPurple,
                                     foreground: .white
                                 ) {
-                                    // Generate reply action
+                                    Task {
+                                        await viewModel.generateMoreRizz(withContext: selectedRizzTone.context)
+                                    }
                                 }
                             }
                             .padding(.horizontal, 16)
                             .padding(.bottom, 40)
-
+                        } else {
+                            VStack(spacing: 16) {
+                                HStack(spacing: 12) {
+                                    Rectangle()
+                                        .fill(Color.secondary.opacity(0.3))
+                                        .frame(height: 1)
+                                    
+                                    Text(LocalizedStringKey("replies_section_title"))
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundStyle(.secondary)
+                                        .tracking(2)
+                                    
+                                    Rectangle()
+                                        .fill(Color.secondary.opacity(0.3))
+                                        .frame(height: 1)
+                                }
+                                
+                                ForEach(0..<5, id: \.self) { _ in
+                                    SkeletonReplyCard()
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.bottom, 16)
                         }
                         
                         Spacer()
@@ -121,11 +150,9 @@ struct GenerateRizzView: View {
                 }
             }
         }
-        .onAppear {
+        .task(id: selectedImage) {
             viewModel.selectedPhoto = selectedImage
-            Task {
-                await viewModel.generateRizz()
-            }
+            await viewModel.generateRizz(withContext: selectedRizzTone.context)
         }
     }
 }

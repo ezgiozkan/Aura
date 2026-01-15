@@ -38,9 +38,26 @@ enum APIEndpoint {
         case .checkAura(let request):
             return Self.baseURL + path + "?language=\(request.language)"
         case .generateRizz(let request):
-            return Self.baseURL + path + "?language=\(request.language)"
+            var urlString = Self.baseURL + path + "?language=\(request.language)"
+            if let extraContext = request.extraContext, !extraContext.isEmpty {
+                if let encoded = extraContext.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                    urlString += "&extra_context=\(encoded)"
+                }
+            }
+            return urlString
         case .generateChatReply(let request):
-            return Self.baseURL + path + "?language=\(request.language)"
+            var urlString = Self.baseURL + path + "?language=\(request.language)"
+            if !request.tone.isEmpty {
+                if let encoded = request.tone.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                    urlString += "&tone=\(encoded)"
+                }
+            }
+            if let extraContext = request.extraContext, !extraContext.isEmpty {
+                if let encoded = extraContext.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
+                    urlString += "&extra_context=\(encoded)"
+                }
+            }
+            return urlString
         }
     }
 
