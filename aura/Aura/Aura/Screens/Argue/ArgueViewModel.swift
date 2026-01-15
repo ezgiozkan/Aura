@@ -48,7 +48,7 @@ final class ArgueViewModel {
         do {
             let request = AnalyzeArgueRequest(
                 imageData: imageData,
-                language: "Turkish",
+                language: LanguageManager.shared.effectiveLanguageCode,
                 fileName: "argue.jpg",
                 mimeType: "image/jpeg"
             )

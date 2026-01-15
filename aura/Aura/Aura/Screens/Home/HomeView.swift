@@ -10,13 +10,16 @@ import PhotosUI
 
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
-    
+    @StateObject private var languageManager = LanguageManager.shared
+    @State private var isLanguageSheetPresented = false
+    @State private var languageSearchText = ""
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color.homeGradient
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 0) {
                     Image("iconAura")
                         .resizable()
@@ -41,7 +44,7 @@ struct HomeView: View {
                                 .lineSpacing(4)
                                 .offset(y: -70)
                                 .padding(.horizontal, 32)
-                            
+
                             PhotosPicker(
                                 selection: $viewModel.messagePhotoItem,
                                 matching: .images
@@ -62,7 +65,7 @@ struct HomeView: View {
                             }
                             .padding(.horizontal, 54)
                             .offset(y: 40)
-                            
+
                             PhotosPicker(
                                 selection: $viewModel.storyPhotoItem,
                                 matching: .images
@@ -89,12 +92,97 @@ struct HomeView: View {
                     Spacer()
                     Spacer()
                 }
+                VStack {
+                    HStack {
+                        Spacer()
+                        Button {
+                            isLanguageSheetPresented = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "globe")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.black)
+
+                                Text(languageManager.effectiveLanguageName)
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(.black)
+                            }
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background(
+                                Capsule(style: .continuous)
+                                    .fill(Color.white.opacity(0.65))
+                            )
+                            .overlay(
+                                Capsule(style: .continuous)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.trailing, 16)
+                        .padding(.top, 14)
+                    }
+                    Spacer()
+                }
+            }
+            .onAppear {
+                languageManager.syncWithDeviceIfNeeded()
             }
             .fullScreenCover(item: $viewModel.selectedStoryImage) { identifiableImage in
                 GenerateRizzView(selectedImage: identifiableImage.image)
             }
             .fullScreenCover(item: $viewModel.selectedMessageImage) { identifiableImage in
                 GenerateChatReplyView(selectedImage: identifiableImage.image)
+            }
+            .sheet(isPresented: $isLanguageSheetPresented) {
+                NavigationStack {
+                    List {
+                        Section {
+                            HStack {
+                                Text("Automatic")
+                                    .foregroundStyle(.primary)
+                                Spacer()
+                                if !languageManager.userSelected {
+                                    Image(systemName: "checkmark")
+                                        .foregroundStyle(.primary)
+                                }
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                languageManager.setAutomatic()
+                                isLanguageSheetPresented = false
+                            }
+                            ForEach(languageManager.filteredLanguages(query: languageSearchText)) { lang in
+                                HStack {
+                                    Text(lang.name)
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                    if lang.code == languageManager.effectiveLanguageCode {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(.primary)
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    languageManager.setLanguage(code: lang.code)
+                                    isLanguageSheetPresented = false
+                                }
+                            }
+                        }
+                    }
+                    .navigationTitle("Language")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .searchable(text: $languageSearchText, placement: .navigationBarDrawer(displayMode: .always))
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Done") {
+                                isLanguageSheetPresented = false
+                            }
+                        }
+                    }
+                }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
         }
     }

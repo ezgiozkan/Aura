@@ -11,7 +11,7 @@ import Alamofire
 struct CheckAuraRequest {
     let meImageData: Data
     let targetImageData: Data
-    var language: String = "Turkish"
+    var language: String = LanguageManager.shared.effectiveLanguageCode
     var meFileName: String = "me.png"
     var targetFileName: String = "target.png"
     var meMimeType: String = "image/png"
@@ -27,5 +27,9 @@ struct CheckAuraRequest {
                         withName: "target",
                         fileName: targetFileName,
                         mimeType: targetMimeType)
+
+        if let data = language.data(using: .utf8) {
+            formData.append(data, withName: "language")
+        }
     }
 }

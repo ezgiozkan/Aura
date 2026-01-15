@@ -15,11 +15,7 @@ final class AnalyzeArgueService {
     
     nonisolated func analyzeArgue(request: AnalyzeArgueRequest) async throws -> AnalyzeArgueResponse {
         let endpoint = APIEndpoint.analyzeArgue(request: request)
-        
-        print("🌐 Analyze Argue Request URL: \(endpoint.url)")
-        print("🌐 Method: \(endpoint.method)")
-        print("🌐 Language: \(request.language)")
-        
+
         return try await withCheckedThrowingContinuation { continuation in
             AF.upload(
                 multipartFormData: { multipartFormData in
@@ -43,12 +39,9 @@ final class AnalyzeArgueService {
                         let decodedResponse = try decoder.decode(AnalyzeArgueResponse.self, from: data)
                         continuation.resume(returning: decodedResponse)
                     } catch {
-                        print("❌ Analyze Argue Decoding Error: \(error)")
-                        print("❌ Response data: \(String(data: data, encoding: .utf8) ?? "nil")")
                         continuation.resume(throwing: error)
                     }
                 case .failure(let error):
-                    print("❌ Analyze Argue Error: \(error)")
                     if let data = response.data {
                         print("❌ Response data: \(String(data: data, encoding: .utf8) ?? "nil")")
                     }

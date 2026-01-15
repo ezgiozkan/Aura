@@ -19,7 +19,7 @@ struct GenerateRizzRequest {
          imageFileName: String = "image.png",
          imageMimeType: String = "image/png",
          extraContext: String? = nil,
-         language: String = "en") {
+         language: String = LanguageManager.shared.effectiveLanguageCode) {
         self.imageData = imageData
         self.imageFileName = imageFileName
         self.imageMimeType = imageMimeType

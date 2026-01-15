@@ -11,7 +11,6 @@ struct GenerateChatReplyResponse: Codable, Sendable {
     let analysis: String
     let replies: [ChatReply]
     
-    /// Sadece reply text'lerini döndürür
     var replyTexts: [String] {
         replies.map(\.text)
     }
