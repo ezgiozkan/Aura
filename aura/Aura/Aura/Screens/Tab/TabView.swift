@@ -18,6 +18,9 @@ struct AppTabView: View {
                 
                 CrushAnalyzer()
                     .tag(TabItem.analyzer)
+                
+                ArgueView()
+                    .tag(TabItem.argue)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .highPriorityGesture(DragGesture())

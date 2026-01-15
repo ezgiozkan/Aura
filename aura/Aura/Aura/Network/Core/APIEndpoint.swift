@@ -12,6 +12,7 @@ enum APIEndpoint {
     case checkAura(request: CheckAuraRequest)
     case generateRizz(request: GenerateRizzRequest)
     case generateChatReply(request: GenerateChatReplyRequest)
+    case analyzeArgue(request: AnalyzeArgueRequest)
 
     static let baseURL = "https://aura-production-e333.up.railway.app"
 
@@ -23,12 +24,14 @@ enum APIEndpoint {
             return "/generate-rizz"
         case .generateChatReply:
             return "/generate-chat-reply"
+        case .analyzeArgue:
+            return "/judge-argument"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .checkAura, .generateRizz, .generateChatReply:
+        case .checkAura, .generateRizz, .generateChatReply, .analyzeArgue:
             return .post
         }
     }
@@ -58,19 +61,21 @@ enum APIEndpoint {
                 }
             }
             return urlString
+        case .analyzeArgue(let request):
+            return Self.baseURL + path + "?language=\(request.language)"
         }
     }
 
     var encoding: ParameterEncoding {
         switch self {
-        case .checkAura, .generateRizz, .generateChatReply:
+        case .checkAura, .generateRizz, .generateChatReply, .analyzeArgue:
             return JSONEncoding.default
         }
     }
     
     var headers: HTTPHeaders {
         switch self {
-        case .checkAura, .generateRizz, .generateChatReply:
+        case .checkAura, .generateRizz, .generateChatReply, .analyzeArgue:
             return ["Accept": "application/json"]
         }
     }

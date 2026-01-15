@@ -10,11 +10,13 @@ import Foundation
 enum TabItem: Int, CaseIterable {
     case home
     case analyzer
+    case argue
 
     var title: String {
         switch self {
         case .home: return "Home"
         case .analyzer: return "Vibe"
+        case .argue: return "Argue"
         }
     }
 
@@ -22,6 +24,7 @@ enum TabItem: Int, CaseIterable {
         switch self {
         case .home: return "house.fill"
         case .analyzer: return "heart.fill"
+        case .argue: return "bubble.left.and.bubble.right.fill"
         }
     }
 }
