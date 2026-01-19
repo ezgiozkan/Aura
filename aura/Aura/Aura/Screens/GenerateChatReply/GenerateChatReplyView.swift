@@ -12,6 +12,8 @@ struct GenerateChatReplyView: View {
     @State private var viewModel = GenerateChatReplyViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedTone: ReplyTone = .friendly
+    @StateObject private var manager = RevenueCatManager.shared
+    @State private var showPaywall: Bool = false
 
     var body: some View {
         ZStack {
@@ -113,8 +115,12 @@ struct GenerateChatReplyView: View {
                                     background: .darkPurple,
                                     foreground: .white
                                 ) {
-                                    Task {
-                                        await viewModel.generateMoreReplies(withContext: selectedTone.context, tone: selectedTone.name)
+                                    if manager.isSubscribed {
+                                        Task {
+                                            await viewModel.generateMoreReplies(withContext: selectedTone.context, tone: selectedTone.name)
+                                        }
+                                    } else {
+                                        showPaywall = true
                                     }
                                 }
                             }
@@ -153,6 +159,9 @@ struct GenerateChatReplyView: View {
         .task(id: selectedImage) {
             viewModel.selectedPhoto = selectedImage
             await viewModel.generateChatReply(withContext: selectedTone.context, tone: selectedTone.name)
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
 }

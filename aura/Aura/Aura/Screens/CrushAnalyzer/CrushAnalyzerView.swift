@@ -11,6 +11,8 @@ import PhotosUI
 struct CrushAnalyzer: View {
     @State private var viewModel = CrushAnalyzerViewModel()
     @State private var showAnalysisResult = false
+    @StateObject private var manager = RevenueCatManager.shared
+    @State private var showPaywall = false
     
     var body: some View {
         ZStack {
@@ -37,8 +39,38 @@ struct CrushAnalyzer: View {
                     HStack(spacing: 20) {
 
                         VStack(spacing: 16) {
-                            PhotosPicker(selection: $viewModel.yourPhotoItem, matching: .images) {
-                                PhotoUploadCard(image: viewModel.yourPhoto)
+                            Button {
+                                if !manager.isSubscribed {
+                                    showPaywall = true
+                                }
+                            } label: {
+                                ZStack(alignment: .topTrailing) {
+                                    PhotoUploadCard(image: viewModel.yourPhoto)
+                                    
+                                    if !manager.isSubscribed {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 10, weight: .semibold))
+                                            Text("Pro")
+                                                .font(.system(size: 11, weight: .bold))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(
+                                            Capsule()
+                                                .fill(Color.black.opacity(0.6))
+                                        )
+                                        .offset(x: -8, y: 8)
+                                    }
+                                }
+                            }
+                            .overlay {
+                                if manager.isSubscribed {
+                                    PhotosPicker(selection: $viewModel.yourPhotoItem, matching: .images) {
+                                        Color.clear
+                                    }
+                                }
                             }
                             .onChange(of: viewModel.yourPhotoItem) { _, _ in
                                 Task {
@@ -59,8 +91,38 @@ struct CrushAnalyzer: View {
                         }
 
                         VStack(spacing: 16) {
-                            PhotosPicker(selection: $viewModel.theirPhotoItem, matching: .images) {
-                                PhotoUploadCard(image: viewModel.theirPhoto)
+                            Button {
+                                if !manager.isSubscribed {
+                                    showPaywall = true
+                                }
+                            } label: {
+                                ZStack(alignment: .topTrailing) {
+                                    PhotoUploadCard(image: viewModel.theirPhoto)
+                                    
+                                    if !manager.isSubscribed {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 10, weight: .semibold))
+                                            Text("Pro")
+                                                .font(.system(size: 11, weight: .bold))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(
+                                            Capsule()
+                                                .fill(Color.black.opacity(0.6))
+                                        )
+                                        .offset(x: -8, y: 8)
+                                    }
+                                }
+                            }
+                            .overlay {
+                                if manager.isSubscribed {
+                                    PhotosPicker(selection: $viewModel.theirPhotoItem, matching: .images) {
+                                        Color.clear
+                                    }
+                                }
                             }
                             .onChange(of: viewModel.theirPhotoItem) { _, _ in
                                 Task {
@@ -83,11 +145,15 @@ struct CrushAnalyzer: View {
                     .padding(.horizontal, 24)
 
                     Button(action: {
-                        Task {
-                            await viewModel.analyzeCrush()
-                            if viewModel.analysisResponse != nil {
-                                showAnalysisResult = true
+                        if manager.isSubscribed {
+                            Task {
+                                await viewModel.analyzeCrush()
+                                if viewModel.analysisResponse != nil {
+                                    showAnalysisResult = true
+                                }
                             }
+                        } else {
+                            showPaywall = true
                         }
                     }) {
                         Image("iconAnalyze")
@@ -130,6 +196,9 @@ struct CrushAnalyzer: View {
             if viewModel.isAnalyzing {
                 AnalyzingOverlay()
             }
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView()
         }
         .fullScreenCover(isPresented: $showAnalysisResult) {
             if let response = viewModel.analysisResponse {

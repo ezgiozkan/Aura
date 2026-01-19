@@ -11,8 +11,12 @@ import PhotosUI
 struct HomeView: View {
     @State private var viewModel = HomeViewModel()
     @StateObject private var languageManager = LanguageManager.shared
+    @StateObject private var manager = RevenueCatManager.shared
     @State private var isLanguageSheetPresented = false
+    @State private var isSettingsSheetPresented = false
+    @State private var shouldOpenLanguageAfterSettingsDismiss = false
     @State private var languageSearchText = ""
+    @State private var showPaywall = false
 
     var body: some View {
         NavigationStack {
@@ -45,18 +49,47 @@ struct HomeView: View {
                                 .offset(y: -70)
                                 .padding(.horizontal, 32)
 
-                            PhotosPicker(
-                                selection: $viewModel.messagePhotoItem,
-                                matching: .images
-                            ) {
-                                PrimaryButton(
-                                    titleKey: "Upload Message Screenshot",
-                                    background: .darkPurple,
-                                    foreground: .white
-                                ) {
-                                    // PhotoPicker will handle this
+                            Button {
+                                if manager.isSubscribed {
+                                } else {
+                                    showPaywall = true
                                 }
-                                .allowsHitTesting(false)
+                            } label: {
+                                ZStack(alignment: .topTrailing) {
+                                    PrimaryButton(
+                                        titleKey: "Upload Message Screenshot",
+                                        background: .darkPurple,
+                                        foreground: .white
+                                    ) {}
+                                    .allowsHitTesting(false)
+                                    
+                                    if !manager.isSubscribed {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 10, weight: .semibold))
+                                            Text("Aura Pro")
+                                                .font(.system(size: 11, weight: .bold))
+                                        }
+                                        .foregroundStyle(.white)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .background(
+                                            Capsule()
+                                                .fill(Color.black.opacity(0.6))
+                                        )
+                                        .offset(x: -10, y: -8)
+                                    }
+                                }
+                            }
+                            .overlay {
+                                if manager.isSubscribed {
+                                    PhotosPicker(
+                                        selection: $viewModel.messagePhotoItem,
+                                        matching: .images
+                                    ) {
+                                        Color.clear
+                                    }
+                                }
                             }
                             .onChange(of: viewModel.messagePhotoItem) { _, newItem in
                                 Task {
@@ -65,19 +98,47 @@ struct HomeView: View {
                             }
                             .padding(.horizontal, 54)
                             .offset(y: 40)
-
-                            PhotosPicker(
-                                selection: $viewModel.storyPhotoItem,
-                                matching: .images
-                            ) {
-                                PrimaryButton(
-                                    titleKey: "Upload Instagram Story",
-                                    background: .white,
-                                    foreground: .darkPurple
-                                ) {
-                                    // PhotoPicker will handle this
+                            Button {
+                                if manager.isSubscribed {
+                                } else {
+                                    showPaywall = true
                                 }
-                                .allowsHitTesting(false)
+                            } label: {
+                                ZStack(alignment: .topTrailing) {
+                                    PrimaryButton(
+                                        titleKey: "Upload Instagram Story",
+                                        background: .white,
+                                        foreground: .darkPurple
+                                    ) {}
+                                    .allowsHitTesting(false)
+                                    
+                                    if !manager.isSubscribed {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "lock.fill")
+                                                .font(.system(size: 10, weight: .semibold))
+                                            Text("Aura Pro")
+                                                .font(.system(size: 11, weight: .bold))
+                                        }
+                                        .foregroundStyle(.darkPurple)
+                                        .padding(.horizontal, 10)
+                                        .padding(.vertical, 5)
+                                        .background(
+                                            Capsule()
+                                                .fill(Color.darkPurple.opacity(0.15))
+                                        )
+                                        .offset(x: -10, y: -8)
+                                    }
+                                }
+                            }
+                            .overlay {
+                                if manager.isSubscribed {
+                                    PhotosPicker(
+                                        selection: $viewModel.storyPhotoItem,
+                                        matching: .images
+                                    ) {
+                                        Color.clear
+                                    }
+                                }
                             }
                             .onChange(of: viewModel.storyPhotoItem) { _, newItem in
                                 Task {
@@ -95,28 +156,14 @@ struct HomeView: View {
                 VStack {
                     HStack {
                         Spacer()
-                        Button {
-                            isLanguageSheetPresented = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "globe")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(.black)
 
-                                Text(languageManager.effectiveLanguageName)
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundStyle(.black)
-                            }
-                            .padding(.horizontal, 14)
-                            .padding(.vertical, 10)
-                            .background(
-                                Capsule(style: .continuous)
-                                    .fill(Color.white.opacity(0.65))
-                            )
-                            .overlay(
-                                Capsule(style: .continuous)
-                                    .stroke(Color.black, lineWidth: 1)
-                            )
+                        Button {
+                            isSettingsSheetPresented = true
+                        } label: {
+                            Image(systemName: "line.3.horizontal")
+                                .font(.system(size: 24, weight: .semibold))
+                                .foregroundStyle(.darkPurple)
+                                .frame(width: 40, height: 40)
                         }
                         .buttonStyle(.plain)
                         .padding(.trailing, 16)
@@ -128,11 +175,27 @@ struct HomeView: View {
             .onAppear {
                 languageManager.syncWithDeviceIfNeeded()
             }
+            .fullScreenCover(isPresented: $showPaywall) {
+                PaywallView()
+            }
             .fullScreenCover(item: $viewModel.selectedStoryImage) { identifiableImage in
                 GenerateRizzView(selectedImage: identifiableImage.image)
             }
             .fullScreenCover(item: $viewModel.selectedMessageImage) { identifiableImage in
                 GenerateChatReplyView(selectedImage: identifiableImage.image)
+            }
+            .sheet(isPresented: $isSettingsSheetPresented, onDismiss: {
+                if shouldOpenLanguageAfterSettingsDismiss {
+                    shouldOpenLanguageAfterSettingsDismiss = false
+                    isLanguageSheetPresented = true
+                }
+            }) {
+                SettingsSheetView(
+                    isPresented: $isSettingsSheetPresented,
+                    shouldOpenLanguageAfterDismiss: $shouldOpenLanguageAfterSettingsDismiss,
+                    languageName: languageManager.effectiveLanguageName,
+                    languageFlag: languageManager.flagEmoji(for: languageManager.effectiveLanguageCode)
+                )
             }
             .sheet(isPresented: $isLanguageSheetPresented) {
                 NavigationStack {

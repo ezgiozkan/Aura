@@ -12,6 +12,8 @@ struct GenerateRizzView: View {
     @State private var viewModel = GenerateRizzViewModel()
     @Environment(\.dismiss) private var dismiss
     @State private var selectedRizzTone: RizzTone = .romantic
+    @StateObject private var manager = RevenueCatManager.shared
+    @State private var showPaywall: Bool = false
 
     var body: some View {
         ZStack {
@@ -113,8 +115,12 @@ struct GenerateRizzView: View {
                                     background: .darkPurple,
                                     foreground: .white
                                 ) {
-                                    Task {
-                                        await viewModel.generateMoreRizz(withContext: selectedRizzTone.context)
+                                    if manager.isSubscribed {
+                                        Task {
+                                            await viewModel.generateMoreRizz(withContext: selectedRizzTone.context)
+                                        }
+                                    } else {
+                                        showPaywall = true
                                     }
                                 }
                             }
@@ -153,6 +159,9 @@ struct GenerateRizzView: View {
         .task(id: selectedImage) {
             viewModel.selectedPhoto = selectedImage
             await viewModel.generateRizz(withContext: selectedRizzTone.context)
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
 }

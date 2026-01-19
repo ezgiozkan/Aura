@@ -6,10 +6,15 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct StartView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
+    @AppStorage("hasSeenInitialPaywall") private var hasSeenInitialPaywall: Bool = false
     @State private var step: AppFlowStep = .videoSplash
+    @State private var showPaywall: Bool = false
+    @StateObject private var manager = RevenueCatManager.shared
+    @Environment(\.requestReview) private var requestReview
 
     var body: some View {
         ZStack {
@@ -43,8 +48,31 @@ struct StartView: View {
         .preferredColorScheme(.light)
         .onChange(of: hasCompletedOnboarding) { oldValue, newValue in
             if newValue {
-                withAnimation(.easeInOut(duration: 0.35)) {
-                    step = .completed
+                if !manager.isSubscribed && !hasSeenInitialPaywall {
+                    showPaywall = true
+                } else {
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        step = .completed
+                    }
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView()
+                .onDisappear {
+                    hasSeenInitialPaywall = true
+                    withAnimation(.easeInOut(duration: 0.35)) {
+                        step = .completed
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        requestReview()
+                    }
+                }
+        }
+        .onChange(of: step) { oldValue, newValue in
+            if newValue == .completed && !showPaywall {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    requestReview()
                 }
             }
         }

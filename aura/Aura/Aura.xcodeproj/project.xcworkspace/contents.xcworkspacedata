@@ -4,4 +4,19 @@
    <FileRef
       location = "self:">
    </FileRef>
+   <FileRef
+      location = "group:RevenueCatManager.swift">
+   </FileRef>
+   <FileRef
+      location = "group:PaywallView.swift">
+   </FileRef>
+   <FileRef
+      location = "group:View+Paywall.swift">
+   </FileRef>
+   <FileRef
+      location = "group:PaywallExampleUsage.swift">
+   </FileRef>
+   <FileRef
+      location = "group:REVENUECAT_README.md">
+   </FileRef>
 </Workspace>

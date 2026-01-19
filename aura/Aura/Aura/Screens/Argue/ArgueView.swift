@@ -10,6 +10,8 @@ import PhotosUI
 
 struct ArgueView: View {
     @State private var viewModel = ArgueViewModel()
+    @StateObject private var manager = RevenueCatManager.shared
+    @State private var showPaywall = false
     
     var body: some View {
         ZStack {
@@ -63,7 +65,6 @@ struct ArgueView: View {
                         if let response = viewModel.analysisResponse {
                             ScrollView(.vertical, showsIndicators: false) {
                                 VStack(spacing: 12) {
-                                    // Başlık
                                     Text("Argue Wrapped")
                                         .font(.system(size: 24, weight: .bold))
                                         .foregroundStyle(.primary)
@@ -260,7 +261,7 @@ struct ArgueView: View {
                         }
                     }
                 } else {
-                    Image("iconHome")
+                    Image("iconArgue")
                         .resizable()
                         .scaledToFit()
                         .frame(maxWidth: 1000)
@@ -268,21 +269,51 @@ struct ArgueView: View {
                 
                 Spacer()
                 
-                PhotosPicker(selection: $viewModel.photoItem, matching: .images) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "photo.badge.plus")
-                            .font(.system(size: 17, weight: .semibold))
-                        
-                        Text(viewModel.selectedImage == nil ? "Upload Screenshot" : "Try Another Photo")
-                            .font(.system(size: 17, weight: .semibold))
+                Button {
+                    if !manager.isSubscribed {
+                        showPaywall = true
                     }
-                    .foregroundStyle(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .fill(Color.black)
-                    )
+                } label: {
+                    ZStack(alignment: .topTrailing) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "photo.badge.plus")
+                                .font(.system(size: 17, weight: .semibold))
+                            
+                            Text(viewModel.selectedImage == nil ? "Upload Screenshot" : "Try Another Photo")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .foregroundStyle(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(
+                            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                                .fill(Color.black)
+                        )
+                        
+                        if !manager.isSubscribed {
+                            HStack(spacing: 4) {
+                                Image(systemName: "lock.fill")
+                                    .font(.system(size: 10, weight: .semibold))
+                                Text("Aura Pro")
+                                    .font(.system(size: 11, weight: .bold))
+                            }
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(
+                                Capsule()
+                                    .fill(Color.darkPurple)
+                            )
+                            .offset(x: -16, y: -8)
+                        }
+                    }
+                }
+                .overlay {
+                    if manager.isSubscribed {
+                        PhotosPicker(selection: $viewModel.photoItem, matching: .images) {
+                            Color.clear
+                        }
+                    }
                 }
                 .padding(.horizontal, 32)
                 .padding(.bottom, 68)
@@ -292,6 +323,9 @@ struct ArgueView: View {
                     }
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
 }
