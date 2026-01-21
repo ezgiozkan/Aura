@@ -1,72 +1,113 @@
-Aura
+# Aura
 
-Aura is an AI-powered dating assistant designed to help users communicate more effectively by generating context-aware, natural, and confident message suggestions.
+Aura is an AI-powered dating assistant engineered to enhance digital communication through context-aware, natural language generation. The application addresses the cognitive overhead associated with modern dating interactions by providing intelligent message suggestions that maintain authenticity while improving conversational effectiveness.
 
-The application focuses on improving the quality of digital conversations by assisting users in choosing the appropriate tone, wording, and timing in modern dating interactions.
+---
 
-⸻
+## Overview
 
-Overview
+Digital dating communication presents unique challenges: response timing, tone calibration, and intent clarity often create unnecessary friction. Aura mitigates these challenges through advanced conversational analysis and AI-driven response generation, enabling users to communicate with confidence while preserving their authentic voice.
 
-Modern dating conversations often involve uncertainty around how to respond, how to maintain engagement, and how to convey intent clearly. Aura addresses these challenges by analyzing conversational context and providing AI-generated response suggestions that feel natural and human.
+The platform is designed as a supportive communication tool rather than a replacement for genuine human expression.
 
-The goal of Aura is to reduce overthinking and help users communicate with confidence while preserving authenticity.
+---
 
-⸻
+## Core Capabilities
 
-Core Capabilities
+### Intelligent Reply Generation
+Context-sensitive response suggestions derived from conversational analysis, emotional cue detection, and intent modeling. The system avoids templated or generic outputs in favor of contextually appropriate recommendations.
 
-Intelligent Reply Suggestions
+### Conversational Context Engine
+Real-time evaluation of emotional undertones, conversation momentum, and interpersonal dynamics to inform response generation.
 
-Aura generates relevant and natural responses based on conversation context, tone, and intent.
+### Media-Based Conversation Analysis
+Support for chat screenshot uploads and text extraction, enabling retrospective conversation analysis and tailored feedback generation.
 
-Context Awareness
+### Conversation Pattern Recognition
+Analytical evaluation of uploaded conversations to identify communication patterns, highlight strengths, and surface areas for improvement.
 
-The system evaluates emotional cues and conversational flow rather than producing generic or templated responses.
+### Privacy-First Architecture
+User data and uploaded content are processed with strict privacy controls. Conversational data is not persisted, shared, or utilized beyond immediate analysis requirements.
 
-Conversation Upload & Analysis
+---
 
-Users can upload chat screenshots or text to receive tailored reply suggestions and feedback.
+## Technical Architecture
 
-Chat Evaluation
+| Component | Technology |
+|-----------|------------|
+| UI Framework | SwiftUI (iOS 15+) |
+| Architecture Pattern | MVVM with Combine |
+| AI Services | Google Gemini API |
+| Subscription Management | RevenueCat SDK |
+| Analytics | Firebase Analytics |
+| Backend Services | Supabase (Auth, Database, Storage) |
+| Concurrency | Swift async/await |
+| Media Processing | Vision Framework (OCR), PhotosUI |
 
-Uploaded conversations can be analyzed to identify patterns, strengths, and areas for improvement.
+### AI Integration
+- Google Gemini API for natural language understanding and generation
+- Multi-modal input support for text and image analysis
+- Prompt engineering optimized for conversational context preservation
+- Response streaming for real-time message generation
 
-Privacy & Data Protection
+### Monetization Infrastructure
+- RevenueCat integration for subscription lifecycle management
+- Support for weekly, monthly, and annual subscription tiers
+- Paywall implementation with A/B testing capabilities
+- Receipt validation and entitlement verification
+- Subscription status synchronization across devices
 
-User data and uploaded content are handled with a privacy-first approach. Conversations are not shared or reused beyond analysis purposes.
+---
 
-⸻
+## Application Flow
 
-Product Philosophy
+```
+Launch Sequence:
+┌─────────────────────┐
+│  Video Splash       │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Pre-Onboarding     │
+│  (Auto-progression) │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Onboarding Flow    │
+│  (4-step guided)    │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Paywall            │
+└──────────┬──────────┘
+           ▼
+┌─────────────────────┐
+│  Chat Interface     │
+└─────────────────────┘
+```
 
-Aura is designed to support real conversations rather than relying on predefined pickup lines.
-It aims to help users:
-	•	Maintain conversation continuity
-	•	Make appropriate first impressions
-	•	Communicate clearly without excessive cognitive effort
+---
 
-The assistant is intended as a supportive tool, not a replacement for personal expression.
+## Product Philosophy
 
-⸻
+Aura operates on the principle that effective communication should be intuitive rather than stressful. The platform is designed to:
 
-Technical Stack
-	•	SwiftUI
-	•	Modern iOS architecture
-	•	AI-based text generation services
-	•	Structured onboarding flow with video splash and guided steps
+- Reduce cognitive load in high-stakes conversational contexts
+- Support natural conversation continuity
+- Enable clear intent communication without over-engineering
+- Preserve user authenticity while improving message quality
 
-⸻
+---
 
-Application Flow
-	1.	Video Splash Screen
-	2.	Pre-Onboarding (automatic progression)
-	3.	Onboarding Process (4 steps)
-	4.	Chat Assistance Interface
+## System Requirements
 
-⸻
+- Deployment Target: iOS 15.0+
+- Development Environment: Xcode 15+
+- Swift Version: 5.9+
+- Active network connection required for AI services
 
-Vision
+---
 
-Aura is built on the belief that digital communication should feel intuitive and confident rather than stressful.
-The long-term vision is to create a reliable conversational assistant that supports users in expressing themselves clearly and effectively in modern dating environments.
+## Vision
+
+Aura is positioned as a reliable conversational assistant for modern dating environments. The long-term objective is to establish a platform that reduces communication anxiety and empowers users to express themselves with clarity and confidence in digital interpersonal contexts.
